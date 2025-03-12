@@ -1,18 +1,25 @@
-import { H3Event } from 'h3'
-import { supabase } from '~/server/utils/supabase'
+export default defineEventHandler(async (event) => {
+  console.log("AuthMiddleware applied:", event.node.req.url);
 
-export default async function authMiddleware(event: H3Event) {
-  const authHeader = getRequestHeader(event, 'authorization')
+  const authHeader = getRequestHeader(event, "authorization");
+  console.log("Authorization Header:", authHeader);
+
   if (!authHeader) {
-    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+    console.log("No Authorization Header. Rejecting.");
+    throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
   }
 
-  const token = authHeader.replace('Bearer ', '')
-  const { data, error } = await supabase.auth.getUser(token)
+  const token = authHeader.replace("Bearer ", "");
+  console.log("Extracted Token:", token);
+
+  const { data, error } = await supabase.auth.getUser(token);
+  console.log("Supabase Auth Result:", { data, error });
 
   if (error || !data?.user) {
-    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+    console.log("Invalid Token. Rejecting.");
+    throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
   }
 
-  event.context.auth = data.user
-}
+  event.context.auth = data.user;
+  console.log("AuthMiddleware passed!");
+});

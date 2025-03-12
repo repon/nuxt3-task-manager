@@ -1,5 +1,16 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import dotenv from "dotenv";
+dotenv.config();
+
 export default defineNuxtConfig({
-  compatibilityDate: '2024-11-01',
-  devtools: { enabled: true }
-})
+  runtimeConfig: {
+    public: {
+      SUPABASE_URL: process.env.SUPABASE_URL,
+      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY
+    },
+    private: {
+      SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY
+    }
+  },
+
+  compatibilityDate: "2025-03-12"
+});
